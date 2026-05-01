@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AAPDA - CRITICAL ALERT</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-surface": "#e2e2e2",
+                    "surface": "#131313",
+                    "on-tertiary-fixed-variant": "#e4e2e2",
+                    "surface-container-high": "#2a2a2a",
+                    "secondary-fixed-dim": "#acabaa",
+                    "on-background": "#e2e2e2",
+                    "tertiary-fixed-dim": "#464747",
+                    "secondary-fixed": "#c8c6c6",
+                    "on-secondary": "#1b1c1c",
+                    "inverse-surface": "#e2e2e2",
+                    "inverse-on-surface": "#303030",
+                    "on-primary-fixed": "#ffffff",
+                    "on-error": "#690005",
+                    "outline": "#919191",
+                    "on-tertiary": "#1b1c1c",
+                    "tertiary-fixed": "#5e5e5e",
+                    "secondary": "#c8c6c6",
+                    "surface-variant": "#353535",
+                    "on-primary-fixed-variant": "#e2e2e2",
+                    "primary-fixed": "#5d5f5f",
+                    "surface-container-low": "#1b1b1b",
+                    "on-primary-container": "#000000",
+                    "on-secondary-container": "#e4e2e1",
+                    "surface-tint": "#c6c6c7",
+                    "on-tertiary-container": "#000000",
+                    "on-tertiary-fixed": "#ffffff",
+                    "secondary-container": "#474747",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-secondary-fixed": "#1b1c1c",
+                    "tertiary": "#e4e2e2",
+                    "surface-dim": "#131313",
+                    "outline-variant": "#474747",
+                    "primary-fixed-dim": "#454747",
+                    "tertiary-container": "#919090",
+                    "on-primary": "#1a1c1c",
+                    "error": "#ffb4ab",
+                    "on-error-container": "#ffdad6",
+                    "background": "#131313",
+                    "error-container": "#93000a",
+                    "surface-container-highest": "#353535",
+                    "primary-container": "#d4d4d4",
+                    "on-surface-variant": "#c6c6c6",
+                    "on-secondary-fixed-variant": "#3b3b3b",
+                    "surface-container": "#1f1f1f",
+                    "surface-bright": "#393939",
+                    "inverse-primary": "#5d5f5f",
+                    "primary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .mono-technical {
+            font-family: 'Space Grotesk', monospace;
+            letter-spacing: -0.02em;
+        }
+        .flicker-on-focus:focus {
+            animation: flicker 0.15s ease-in-out;
+        }
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary selection:text-on-primary overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#131313] flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white text-2xl" data-icon="emergency_home">emergency_home</span>
+<h1 class="text-2xl font-bold tracking-[-0.05em] text-white font-['Space_Grotesk'] uppercase tracking-tighter">AAPDA</h1>
+</div>
+<button class="hover:bg-[#2a2a2a] transition-all duration-100 p-2 flicker-on-focus">
+<span class="material-symbols-outlined text-white" data-icon="notifications_active" style="font-variation-settings: 'FILL' 1;">notifications_active</span>
+</button>
+</header>
+<main class="pt-24 pb-32 min-h-screen px-6 max-w-5xl mx-auto space-y-16">
+<!-- Hero Alert Section -->
+<section class="space-y-8">
+<div class="bg-error-container/10 border-l-4 border-error p-8 space-y-4">
+<div class="flex items-center gap-2 text-error animate-pulse">
+<span class="material-symbols-outlined" data-icon="warning" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-label text-sm uppercase tracking-widest font-bold">SYSTEM BROADCAST // LIVE</span>
+</div>
+<h2 class="font-headline text-5xl md:text-7xl font-extrabold text-white leading-none tracking-tighter uppercase">
+                    CRITICAL: SEISMIC ACTIVITY - ZONE 7
+                </h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-outline-variant/30">
+<div class="bg-surface-container-low p-8 aspect-square flex flex-col justify-end group">
+<div class="space-y-6">
+<div class="mono-technical text-primary/40 text-xs uppercase tracking-widest">TRANSLATION: GERMAN</div>
+<p class="font-headline text-2xl md:text-3xl text-white font-medium leading-tight">
+                            Sofortige Evakuierung empfohlen für alle Sektoren im Umkreis von 5 km um das Epizentrum. Automatisierte Reaktionseinheiten eingesetzt.
+                        </p>
+</div>
+</div>
+<div class="bg-surface-container-low p-8 aspect-square flex flex-col justify-between">
+<div class="mono-technical text-primary/40 text-xs uppercase tracking-widest">COORDINATES &amp; DATA</div>
+<div class="space-y-4">
+<div class="flex justify-between border-b border-outline-variant pb-2">
+<span class="text-secondary text-xs uppercase tracking-widest">MAGNITUDE</span>
+<span class="text-white font-bold">7.2 M_w</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant pb-2">
+<span class="text-secondary text-xs uppercase tracking-widest">DEPTH</span>
+<span class="text-white font-bold">12.4 KM</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant pb-2">
+<span class="text-secondary text-xs uppercase tracking-widest">THREAT LVL</span>
+<span class="text-error font-bold">EXTREME</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Multi-Language Grid (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="md:col-span-2 bg-surface-container p-8 space-y-6">
+<div class="space-y-8">
+<div class="space-y-2">
+<span class="mono-technical text-primary/40 text-xs uppercase tracking-widest">STATE LANGUAGE: HINDI</span>
+<p class="font-headline text-3xl text-white leading-relaxed">
+                            अधिकेंद्र के 5 किमी के दायरे में आने वाले सभी क्षेत्रों के लिए तत्काल निकासी की सिफारिश की गई है। स्वचालित प्रतिक्रिया इकाइयाँ तैनात की गईं।
+                        </p>
+</div>
+<div class="h-px bg-outline-variant"></div>
+<div class="space-y-2">
+<span class="mono-technical text-primary/40 text-xs uppercase tracking-widest">GLOBAL STANDARD: ENGLISH</span>
+<p class="font-body text-xl text-secondary leading-relaxed">
+                            Immediate evacuation recommended for all sectors within a 5km radius of the epicenter. Automated response units deployed.
+                        </p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-high p-6 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute inset-0 opacity-10">
+<img class="w-full h-full object-cover grayscale" data-alt="high-contrast monochromatic technical heat map showing seismic waves and epicenter data points" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOzM5GzuahWZTPnnbKPRDtoFhHGNxJHlexxQxfmvM6RND0rhvd0gdk_IA92z3uo3kRkaOBwdKgbsaZGjeADYAEAx26aXcigI5JV1am2hohZ7Dp_weAM7SAngIXRTlae-Qqj4R2CjRQgG7XOvyG6t-aqYg3Argztwc7DoPGIIS6yEwKxsrkrkE0HDefbLmiozOGUyFfAfnJ5ZYeA8Yjeo7aZyphkZmEFCorrd4zaBtw1TFBR4AP-ktYENAapOCkwxS0sKPzmnfK5MJB"/>
+</div>
+<div class="relative z-10 space-y-4">
+<span class="mono-technical text-white text-xs uppercase tracking-widest bg-error px-2 py-1">EVAC_READY</span>
+<h3 class="font-headline text-xl text-white font-bold">Automated Response Active</h3>
+<p class="text-sm text-secondary">Unit deployment initialized at 04:12 UTC. Perimeter securing in progress.</p>
+</div>
+<button class="relative z-10 w-full bg-primary text-on-primary py-4 font-label font-bold uppercase tracking-widest hover:bg-secondary transition-all flex items-center justify-center gap-2 group">
+                    OPEN EVAC ROUTE
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</section>
+<!-- Intelligence Section -->
+<section class="space-y-8 pb-12">
+<div class="flex items-end justify-between border-b border-outline-variant pb-4">
+<h2 class="font-headline text-3xl font-bold text-white uppercase tracking-tighter">News &amp; Intelligence</h2>
+<span class="mono-technical text-xs text-primary/40">LAST SYNC: 14:02:11</span>
+</div>
+<div class="space-y-4">
+<a class="group block bg-surface-container-low hover:bg-surface-container-high transition-colors p-6 flex items-center justify-between border border-transparent hover:border-outline-variant" href="#">
+<div class="flex items-center gap-6">
+<span class="mono-technical text-primary/20 text-2xl font-bold">01</span>
+<div>
+<h4 class="text-white font-bold uppercase tracking-tight group-hover:text-primary transition-colors">Federal Geological Survey Report</h4>
+<p class="text-sm text-secondary">Comprehensive tectonic plate analysis and aftershock probability models.</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary group-hover:text-white" data-icon="north_east">north_east</span>
+</a>
+<a class="group block bg-surface-container-low hover:bg-surface-container-high transition-colors p-6 flex items-center justify-between border border-transparent hover:border-outline-variant" href="#">
+<div class="flex items-center gap-6">
+<span class="mono-technical text-primary/20 text-2xl font-bold">02</span>
+<div>
+<h4 class="text-white font-bold uppercase tracking-tight group-hover:text-primary transition-colors">Local Emergency Broadcast</h4>
+<p class="text-sm text-secondary">Real-time voice and text updates from regional command centers.</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary group-hover:text-white" data-icon="radio">radio</span>
+</a>
+<a class="group block bg-surface-container-low hover:bg-surface-container-high transition-colors p-6 flex items-center justify-between border border-transparent hover:border-outline-variant" href="#">
+<div class="flex items-center gap-6">
+<span class="mono-technical text-primary/20 text-2xl font-bold">03</span>
+<div>
+<h4 class="text-white font-bold uppercase tracking-tight group-hover:text-primary transition-colors">Global Seismic Monitoring Network</h4>
+<p class="text-sm text-secondary">External verification from third-party global observation satellites.</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary group-hover:text-white" data-icon="public">public</span>
+</a>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-8 pb-4 bg-[#131313]/90 backdrop-blur-md">
+<a class="flex flex-col items-center justify-center text-[#c8c6c6] hover:text-white hover:translate-x-[2px] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-[0.1em]">AI</span>
+</a>
+<a class="flex flex-col items-center justify-center text-white font-bold scale-105 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-[0.1em]">HOME</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#c8c6c6] hover:text-white hover:translate-x-[2px] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Space_Grotesk'] text-[10px] uppercase tracking-[0.1em]">PROFILE</span>
+</a>
+</nav>
+</body></html>

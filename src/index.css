@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  }
+}
+
+/* Breach Intro Effect */
+@keyframes screen-breach {
+  0% {
+    transform: scale(1.1);
+    filter: brightness(5) contrast(2) hue-rotate(90deg);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+    filter: brightness(10) contrast(5);
+  }
+  10% {
+    transform: scale(1) skewX(20deg);
+    filter: brightness(1) contrast(1);
+  }
+  15% {
+    transform: skewX(-20deg);
+  }
+  20% {
+    transform: skewX(0);
+  }
+}
+
+/* Violent Logo Jitter */
+@keyframes violent-jitter {
+  0% {
+    transform: translate(0, 0) scale(1);
+    text-shadow: 2px 2px #f00, -2px -2px #0ff;
+  }
+  10% {
+    transform: translate(-2px, 1px) scale(1.01);
+  }
+  20% {
+    transform: translate(2px, -2px) scale(0.99);
+    text-shadow: -3px 0 #f00, 3px 0 #0ff;
+  }
+  30% {
+    transform: translate(-1px, 2px);
+  }
+  40% {
+    transform: translate(1px, -1px) scale(1.02);
+  }
+  50% {
+    transform: translate(-2px, -2px);
+    text-shadow: 4px 0 #f00, -4px 0 #0ff;
+  }
+  60% {
+    transform: translate(2px, 1px);
+  }
+  70% {
+    transform: translate(-1px, -1px);
+  }
+  80% {
+    transform: translate(2px, 2px) scale(0.98);
+  }
+  90% {
+    transform: translate(-2px, 1px);
+  }
+  100% {
+    transform: translate(0, 0);
+    text-shadow: 2px 2px #f00, -2px -2px #0ff;
+  }
+}
+
+/* Power Surge Glow */
+@keyframes power-surge {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2), inset 0 0 0px rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.4);
+  }
+  52% {
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.9), inset 0 0 15px rgba(255, 255, 255, 0.6);
+  }
+  54% {
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.4);
+  }
+}
+
+@keyframes breach-flash {
+  0% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  40% {
+    opacity: 1;
+    transform: scaleY(0.01);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+}
+
+@keyframes motion-blur-entry {
+  0% {
+    transform: translateY(50px) scaleY(1.5);
+    filter: blur(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+/* Base Component Classes */
+@layer components {
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+    background-size: 100% 4px;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.15;
+  }
+
+  .noise-layer {
+    position: fixed;
+    inset: 0;
+    background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA-MwXwxphBNrijqHWVIWuEb76Eb9neP5v8Rxv12xmcArFIrjH2Q1Wq3_WwFGi-QrEgi8ytQnKrioa-t1Scks_z1lb-xpp391EuMFJWzY0Vd3tafpbN8tfNPrXVTLvLpz_0yBJS889Co01CpctEfN8SVlFabbAvu1UTp4qfvG2rXdyP_N5XsRspWKRppX7Ax6ky8nWW3PbSFPHN75ygIijhE-q9AIip2wJBmrVZu_8SLh2zjNptxXqKSPtuAzgtz0qpoiITdHnxJbCX");
+    opacity: 0.05;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .breach-overlay {
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 100;
+    pointer-events: none;
+    animation: breach-flash 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  }
+
+  .glitch-text {
+    animation: violent-jitter 0.15s infinite;
+    display: inline-block;
+  }
+
+  .intro-motion-blur {
+    animation: motion-blur-entry 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+
+  .btn-surge {
+    animation: power-surge 4s infinite;
+  }
+  
+  .btn-surge:active {
+    transform: scale(0.92) !important;
+    transition: transform 0.1s cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .glitch-hover:hover {
+    transform: translateX(2px);
+    filter: drop-shadow(-2px 0 #ffb4ab);
+  }
+}
+
+body {
+  min-height: 100dvh;
+  background: transparent;
+}

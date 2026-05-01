@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AAPDA</title>
+    <!-- We inject Google fonts similar to original -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  </head>
+  <body class="text-on-background font-body selection:bg-primary selection:text-on-primary flex flex-col justify-center items-center">
+    <div id="root" class="w-full h-full flex flex-col justify-center items-center"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Subliminal Background Grain/Static (Needs trailing slash to match React properly since it was outside main in the original DOM) -->
+    <div class="fixed inset-0 pointer-events-none opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] z-[-1]"></div>
+  </body>
+</html>
