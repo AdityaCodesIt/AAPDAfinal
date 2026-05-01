@@ -566,6 +566,148 @@ export default function TerminalHomepage({ onAlertClick, onAIClick, onProfileCli
         .decrypting {
             font-family: 'Space Mono', monospace;
         }
+
+        /* --- DESKTOP REDESIGN (1024px+) --- */
+        @media (min-width: 1024px) {
+            /* MAIN LAYOUT: Split into Sidebar (Hero) and Content (Alerts) */
+            main {
+                max-width: 100% !important;
+                padding-left: 48px !important; 
+                padding-right: 48px !important;
+                padding-bottom: 100px !important;
+                padding-top: 120px !important;
+                display: grid !important;
+                grid-template-columns: 350px minmax(0, 1fr);
+                gap: 40px;
+                align-items: start;
+            }
+
+            /* HEADER: Normal padding since no sidebar */
+            #ui-header {
+                padding-left: 48px !important;
+                padding-right: 48px !important;
+                background: rgba(10, 10, 10, 0.95);
+            }
+
+            /* HERO SECTION: Sticky on the left */
+            #hero-section {
+                position: sticky;
+                top: 120px;
+                margin-bottom: 0 !important;
+                padding-right: 10px;
+            }
+
+            #main-headline {
+                font-size: 5rem !important; 
+                line-height: 0.9 !important;
+                word-wrap: break-word;
+            }
+
+            /* ALERTS CONTAINER: Dashboard grid layout for cards */
+            #alerts-container {
+                display: grid !important;
+                grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+                gap: 32px !important;
+                align-items: stretch;
+            }
+            
+            /* Make alert cards fill height */
+            #alerts-container > div {
+                height: 100%;
+            }
+
+            .glass-morphism {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+            }
+
+            /* Fix card inner layout to prevent overflow on narrow grid columns */
+            .glass-morphism > .md\\:flex-row {
+                flex-direction: column !important;
+                gap: 16px !important;
+            }
+
+            /* Allow badge and stamp to wrap if needed */
+            .glass-morphism .items-center {
+                flex-wrap: wrap !important;
+            }
+            
+            /* Ensure right aligned items (like LOC_ID) align left in column layout */
+            .glass-morphism .md\\:items-end {
+                align-items: flex-start !important;
+            }
+
+            /* System Status Footer: Span across all columns in the grid */
+            #alerts-container > div:last-child {
+                grid-column: 1 / -1;
+                margin-top: 32px;
+            }
+        }
+
+        /* --- NEW FLOATING NAV --- */
+        .ui-nav-pill {
+            --col-active: #fff;
+            --col-dark: rgba(12, 15, 20, 0.85);
+            --col-darkGray: #52555a;
+            --col-gray: #aeaeae;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            background-color: var(--col-dark);
+            border-radius: 40px;
+            padding: 4px 12px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.15), 0 10px 40px rgba(0,0,0,0.8);
+        }
+        .ui-nav-label {
+            padding: 12px 24px;
+            transition: all 200ms;
+            display: inline-block;
+            cursor: pointer;
+            position: relative;
+        }
+        .ui-nav-label input[type="radio"] {
+            display: none;
+        }
+        .ui-nav-label > span.material-symbols-outlined {
+            transition: all 300ms;
+            color: var(--col-darkGray);
+            display: block;
+            margin-top: 0;
+            text-align: center;
+        }
+        .ui-nav-label:hover:not(:has(input:checked)) > span.material-symbols-outlined {
+            color: var(--col-active);
+            opacity: 0.6;
+        }
+        .ui-nav-label::before {
+            content: "";
+            display: block;
+            width: 0%;
+            height: 3px;
+            border-radius: 5px;
+            position: absolute;
+            left: 50%;
+            bottom: 4px;
+            transform: translateX(-50%);
+            background: var(--col-active);
+            transition: all 200ms;
+            box-shadow: 0 0 10px var(--col-active);
+        }
+        .ui-nav-label:has(input:checked) > span.material-symbols-outlined {
+            color: var(--col-active);
+            scale: 1.2;
+            margin-top: -6px;
+            text-shadow: 0 0 15px rgba(255,255,255,0.5);
+        }
+        .ui-nav-label:has(input:checked)::before {
+            width: 40%;
+        }
       `}</style>
       {/* STAGE 1 & 2: BOOT SEQUENCE */}
       <div id="boot-layer" ref={bootLayerRef}>
@@ -758,26 +900,23 @@ export default function TerminalHomepage({ onAlertClick, onAIClick, onProfileCli
         </div>
       </main>
 
-      {/* BottomNavBar */}
-      <nav 
-        className="fixed bottom-0 left-0 w-full h-20 flex justify-around items-stretch bg-[#0a0a0a]/90 backdrop-blur-3xl z-50 border-t border-white/10 reveal-hidden" 
-        id="ui-nav"
-        ref={navRef}
-      >
-        <button onClick={onAIClick} className="flex items-center justify-center text-[#919191] w-full h-full transition-all group nav-item-crazy">
-          <span className="material-symbols-outlined transition-transform text-3xl">smart_toy</span>
-        </button>
-        <div className="w-full home-btn-container">
-          <a className="flex items-center justify-center bg-white text-[#0a0a0a] h-full w-full pulsate-core z-10 relative overflow-hidden group transition-all nav-item-crazy" href="#">
-            <span className="material-symbols-outlined relative z-20 transition-transform text-3xl">home</span>
-            <div className="absolute inset-0 bg-white group-hover:bg-[#f0f0f0] transition-colors"></div>
-            <div className="home-btn-ripple"></div>
-          </a>
-        </div>
-        <button onClick={onProfileClick} className="flex items-center justify-center text-[#919191] w-full h-full transition-all group nav-item-crazy">
-          <span className="material-symbols-outlined transition-transform text-3xl">person</span>
-        </button>
-      </nav>
+      {/* Floating Bottom Nav */}
+      <div className="fixed bottom-8 left-0 w-full flex justify-center z-50 pointer-events-none">
+        <section className="ui-nav-pill pointer-events-auto reveal-hidden" id="ui-nav" ref={navRef}>
+          <label title="AI Terminal" className="ui-nav-label">
+            <input name="page" type="radio" onClick={onAIClick} />
+            <span className="material-symbols-outlined text-3xl">smart_toy</span>
+          </label>
+          <label title="Home" className="ui-nav-label">
+            <input name="page" type="radio" defaultChecked onClick={() => {}} />
+            <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
+          </label>
+          <label title="Profile" className="ui-nav-label">
+            <input name="page" type="radio" onClick={onProfileClick} />
+            <span className="material-symbols-outlined text-3xl">person</span>
+          </label>
+        </section>
+      </div>
     </div>
   );
 }

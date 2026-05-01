@@ -6,6 +6,8 @@
 // =====================================================
 
 // Severity mapping: GDACS alert levels → app severity
+import { DUMMY_DATA_ALERTS } from './dummyAlerts';
+
 const GDACS_ALERT_MAP = {
   'Red': 'high',
   'Orange': 'medium',
@@ -170,21 +172,24 @@ export async function fetchDisasterAlerts(userCountry, userState, userRegion) {
 
   console.log(`[DisasterService] Fetching alerts for: Country=${countryUpper} (${userISO3}), State=${stateUpper}, Region=${regionUpper}`);
 
-  // ===== CUSTOM MOCK ALERT FOR MUMBAI =====
-  if (countryUpper === 'INDIA' && (regionUpper.includes('MUMBAI') || regionUpper.includes('MIRA') || stateUpper.includes('MAHARASHTRA') || (!regionUpper && !stateUpper))) {
-    alerts.push({
-      id: 'custom-mira-bhayander-fire',
-      title: 'MAJOR FIRE BREAKOUT: MIRA BHAYANDER',
-      description: 'A Level-3 massive fire has broken out in the Mira Bhayander region. Multiple fire engines and rescue teams have been dispatched. Citizens are strongly advised to avoid the area, stay indoors, and keep windows closed to avoid toxic smoke inhalation.',
-      severity: 'high',
-      timestamp: now,
-      source: 'LOCAL_AUTHORITY // FIRE_DEPT',
-      location: 'MIRA BHAYANDER, MUMBAI, MAHARASHTRA',
-      alertLevel: 'Red',
-      eventType: 'FIRE',
-      lat: 19.2813,
-      lon: 72.8665,
-    });
+  // ===== INJECT DUMMY DATA ALERTS =====
+  if (countryUpper === 'INDIA' || !countryUpper) {
+    for (const dummy of DUMMY_DATA_ALERTS) {
+      let match = false;
+      if (!regionUpper && !stateUpper) {
+        match = true;
+      } else {
+        if (stateUpper && dummy.location.includes(stateUpper)) match = true;
+        if (regionUpper && dummy.location.includes(regionUpper)) match = true;
+      }
+      
+      if (match) {
+        alerts.push({
+          ...dummy,
+          timestamp: now,
+        });
+      }
+    }
   }
 
   // ===== SOURCE 1: GDACS EVENT LIST =====

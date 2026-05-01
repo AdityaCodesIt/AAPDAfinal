@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 export default function Registration({ onNext, formData, updateFormData }) {
   const [errors, setErrors] = useState({});
+  const [showPin, setShowPin] = useState(false);
 
   const validate = () => {
     const newErrors = {};
@@ -130,15 +131,27 @@ export default function Registration({ onNext, formData, updateFormData }) {
                 />
                 {errors.region && <p className="mt-1 font-mono text-[9px] text-red-500 uppercase tracking-widest animate-pulse">{errors.region}</p>}
               </div>
-              <div className="group">
+              <div className="group relative">
                 <label className="font-label text-[10px] uppercase tracking-[0.2em] text-secondary mb-2 block">PIN</label>
-                <input 
-                  className={`w-full bg-surface-container border-0 border-b ${errors.pin ? 'border-red-500' : 'border-outline-variant'} focus:border-primary focus:ring-0 text-white font-body px-0 py-3 transition-all placeholder:text-surface-variant tracking-widest text-sm`}
-                  placeholder="****" 
-                  type="password"
-                  value={formData.pin}
-                  onChange={(e) => { updateFormData({ pin: e.target.value }); setErrors(prev => ({...prev, pin: null})); }}
-                />
+                <div className="relative">
+                  <input 
+                    className={`w-full bg-surface-container border-0 border-b ${errors.pin ? 'border-red-500' : 'border-outline-variant'} focus:border-primary focus:ring-0 text-white font-body px-0 py-3 pr-10 transition-all placeholder:text-surface-variant tracking-widest text-sm`}
+                    placeholder="****" 
+                    type={showPin ? "text" : "password"}
+                    value={formData.pin}
+                    onChange={(e) => { updateFormData({ pin: e.target.value }); setErrors(prev => ({...prev, pin: null})); }}
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPin(!showPin)}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-surface-variant hover:text-white transition-colors flex items-center justify-center"
+                    tabIndex="-1"
+                  >
+                    <span className="material-symbols-outlined text-lg">
+                      {showPin ? 'visibility_off' : 'visibility'}
+                    </span>
+                  </button>
+                </div>
                 {errors.pin && <p className="mt-1 font-mono text-[9px] text-red-500 uppercase tracking-widest animate-pulse">{errors.pin}</p>}
               </div>
             </div>

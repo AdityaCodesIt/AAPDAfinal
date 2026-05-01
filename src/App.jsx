@@ -9,6 +9,7 @@ import AlertDetails from './AlertDetails.jsx';
 import AITerminal from './AITerminal.jsx';
 import AapdaAccountProfileFixed from './AapdaAccountProfileFixed.jsx';
 import ScreenTransition from './HomeTransition.jsx';
+import Tutorial from './Tutorial.jsx';
 import { supabase } from './supabaseClient.js';
 
 // Indian state → regional language mapping
@@ -57,6 +58,14 @@ function App() {
   const [authUser, setAuthUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [selectedAlert, setSelectedAlert] = useState(null);
+  const [showTutorial, setShowTutorial] = useState(() => {
+    return !localStorage.getItem('aapda_tutorial_done');
+  });
+
+  const handleTutorialComplete = () => {
+    localStorage.setItem('aapda_tutorial_done', '1');
+    setShowTutorial(false);
+  };
 
   // --- Unified Transition State ---
   const [transitionActive, setTransitionActive] = useState(false);
@@ -245,15 +254,20 @@ function App() {
         preferred_language: formData.preferred_language,
         detected_locale: formData.detected_locale,
         emergency_override_english: formData.emergency_override_english,
+        auth_id: authUser?.id || null,
       };
 
       console.log('Submitting user data to Supabase:', JSON.stringify(payload, null, 2));
 
       // Use upsert with email as conflict target so returning users update their data
-      const { data, error } = await supabase
+      const upsertPromise = supabase
         .from('users')
         .upsert([payload], { onConflict: 'email' })
         .select();
+
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase request timed out after 8 seconds')), 8000));
+
+      const { data, error } = await Promise.race([upsertPromise, timeoutPromise]);
 
       if (error) {
         console.error('Supabase insert/upsert error:', error);
@@ -265,7 +279,7 @@ function App() {
       setCurrentScreen('terminal');
     } catch (err) {
       console.error('Unexpected error:', err);
-      alert('SYSTEM ERROR: ' + err.message);
+      // alert('SYSTEM ERROR: ' + err.message); // Removing alert to prevent blocking the UI
       setCurrentScreen('terminal');
     }
   };
@@ -297,15 +311,18 @@ function App() {
   // Loading screen while checking auth
   if (authLoading && currentScreen === 'splash') {
     return (
-      <div className="absolute inset-0 w-screen h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="font-headline text-6xl font-black italic tracking-tighter text-white uppercase glitch-text mb-6">AAPDA</h1>
-          <div className="flex items-center justify-center gap-3">
-            <span className="material-symbols-outlined text-white text-2xl animate-spin">sync</span>
-            <p className="font-mono text-[10px] text-[#919191] uppercase tracking-widest">AUTHENTICATING_SESSION...</p>
+      <>
+        {showTutorial && <Tutorial onComplete={handleTutorialComplete} />}
+        <div className="absolute inset-0 w-screen h-screen bg-black flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="font-headline text-6xl font-black italic tracking-tighter text-white uppercase glitch-text mb-6">AAPDA</h1>
+            <div className="flex items-center justify-center gap-3">
+              <span className="material-symbols-outlined text-white text-2xl animate-spin">sync</span>
+              <p className="font-mono text-[10px] text-[#919191] uppercase tracking-widest">AUTHENTICATING_SESSION...</p>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -404,7 +421,9 @@ function App() {
 
   // --- Splash Screen with Google Sign In ---
   return (
-    <div className="absolute inset-0 w-screen min-h-screen bg-black overflow-hidden z-0">
+    <>
+      {showTutorial && <Tutorial onComplete={handleTutorialComplete} />}
+      <div className="absolute inset-0 w-screen min-h-screen bg-black overflow-hidden z-0">
       <video autoPlay loop muted playsInline
         className="hidden md:block absolute inset-0 w-full h-full object-cover opacity-50 pointer-events-none"
         src={bgVideo}
@@ -451,6 +470,7 @@ function App() {
         </div>
       </main>
     </div>
+    </>
   );
 }
 

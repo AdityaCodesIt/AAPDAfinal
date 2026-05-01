@@ -18,8 +18,8 @@ function Field({ label, icon, value, editable = false, editValue, onChange, plac
   return (
     <div className={`profile-field group transition-all duration-300 ${locked ? 'opacity-80' : ''}`}>
       <div className="flex items-center gap-2 mb-2">
-        <span className="material-symbols-outlined text-white/30 text-base">{icon}</span>
-        <span className="font-mono text-[9px] text-white/40 uppercase tracking-[0.3em]">{label}</span>
+        <span className="material-symbols-outlined text-white/50 text-base group-hover:text-white transition-colors">{icon}</span>
+        <span className="font-mono text-xs text-white/50 uppercase tracking-[0.1em] group-hover:text-white transition-colors font-medium">{label}</span>
         {locked && (
           <span className="ml-auto flex items-center gap-1 font-mono text-[8px] text-white/20 border border-white/10 px-1.5 py-0.5 uppercase tracking-widest bg-white/5">
             <span className="material-symbols-outlined text-[10px]">lock</span> LOCKED
@@ -36,8 +36,8 @@ function Field({ label, icon, value, editable = false, editValue, onChange, plac
           className="w-full bg-white/5 border border-white/10 focus:border-white/30 focus:bg-white/10 text-white font-mono text-sm px-4 py-3 outline-none transition-all placeholder:text-white/10 rounded-none"
         />
       ) : (
-        <div className="font-mono text-sm text-white font-medium tracking-wide px-4 py-3 bg-white/[0.01] border border-white/5 min-h-[2.2rem] flex items-center">
-          {displayValue || <span className="text-white/10 italic">NOT_SET</span>}
+        <div className="font-sans text-lg text-white font-semibold tracking-wide px-4 py-3 bg-white/5 border border-white/10 min-h-[3rem] flex items-center group-hover:bg-white/10 group-hover:border-white/30 group-hover:shadow-[0_0_15px_rgba(255,255,255,0.1)] transition-all overflow-hidden rounded-sm">
+          <span className="truncate w-full block">{displayValue || <span className="text-white/30 italic font-normal">NOT_SET</span>}</span>
         </div>
       )}
     </div>
@@ -92,19 +92,39 @@ export default function AapdaAccountProfileFixed({ onHome, onAI, onSignOut, form
     try {
       const email = formData.email || authUser?.email;
       if (!email) throw new Error('Email identifier missing.');
-      const payload = { ...editForm, email };
       
-      const { error } = await supabase.from('users').upsert([payload], { onConflict: 'email' });
-      
-      if (error) throw new Error(error.message);
-      
+      const payload = {
+        ...editForm,
+        email,
+        auth_id: authUser?.id || null,
+      };
+
+      console.log('Saving profile to Supabase:', JSON.stringify(payload, null, 2));
+
+      const upsertPromise = supabase
+        .from('users')
+        .upsert([payload], { onConflict: 'email' })
+        .select();
+
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Database request timed out')), 10000)
+      );
+
+      const { data, error } = await Promise.race([upsertPromise, timeoutPromise]);
+
+      if (error) {
+        console.error('Supabase upsert error:', error);
+        throw new Error(error.message);
+      }
+
+      console.log('Profile saved successfully:', data);
       updateFormData(editForm);
       setIsEditing(false);
       setSaveStatus('success');
       setTimeout(() => setSaveStatus(null), 3000);
     } catch (err) {
       setSaveStatus('error');
-      console.error('Profile save error:', err);
+      console.error('Profile save error:', err.message);
     }
     setIsSaving(false);
   };
@@ -128,10 +148,118 @@ export default function AapdaAccountProfileFixed({ onHome, onAI, onSignOut, form
         .nav-item-crazy:hover span { text-shadow: 0 0 10px rgba(255,255,255,0.5); transform: translateY(-2px); }
         .nav-item-active { background: rgba(255,255,255,0.05); box-shadow: inset 0 -2px 0 white; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade { animation: fadeIn 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        @keyframes revealProfile {
+            0% { opacity: 0; transform: translateY(30px) scale(0.98); filter: blur(10px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+        .animate-fade { 
+            animation: revealProfile 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+            will-change: transform, opacity, filter; 
+            opacity: 0; 
+        }
+        .glow-text { text-shadow: 0 0 15px rgba(255,255,255,0.6); }
 
         select option { background: #111; color: white; }
+
+        /* --- DESKTOP LAYOUT OVERRIDES --- */
+        @media (min-width: 1024px) {
+            .profile-desktop-layout {
+                max-width: 1400px !important;
+                display: grid !important;
+                grid-template-columns: 380px 1fr !important;
+                gap: 64px !important;
+                align-items: start !important;
+                padding-left: 64px !important;
+                padding-right: 64px !important;
+                padding-bottom: 120px !important;
+            }
+            .profile-identity-section {
+                position: sticky !important;
+                top: 112px !important;
+            }
+            .profile-form-sections {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 48px !important;
+            }
+            .profile-signout-section {
+                grid-column: 1 / -1 !important;
+                border-top: none !important;
+            }
+            .glass-panel {
+                flex-direction: column !important;
+                align-items: center !important;
+                text-align: center !important;
+            }
+            .glass-panel .flex-1 {
+                text-align: center !important;
+            }
+            .glass-panel .justify-start {
+                justify-content: center !important;
+            }
+        }
+
+        /* --- NEW FLOATING NAV --- */
+        .ui-nav-pill {
+            --col-active: #fff;
+            --col-dark: rgba(12, 15, 20, 0.85);
+            --col-darkGray: #52555a;
+            --col-gray: #aeaeae;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: fit-content;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            background-color: var(--col-dark);
+            border-radius: 40px;
+            padding: 4px 12px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.15), 0 10px 40px rgba(0,0,0,0.8);
+        }
+        .ui-nav-label {
+            padding: 12px 24px;
+            transition: all 200ms;
+            display: inline-block;
+            cursor: pointer;
+            position: relative;
+        }
+        .ui-nav-label input[type="radio"] {
+            display: none;
+        }
+        .ui-nav-label > span.material-symbols-outlined {
+            transition: all 300ms;
+            color: var(--col-darkGray);
+            display: block;
+            margin-top: 0;
+            text-align: center;
+        }
+        .ui-nav-label:hover:not(:has(input:checked)) > span.material-symbols-outlined {
+            color: var(--col-active);
+            opacity: 0.6;
+        }
+        .ui-nav-label::before {
+            content: "";
+            display: block;
+            width: 0%;
+            height: 3px;
+            border-radius: 5px;
+            position: absolute;
+            left: 50%;
+            bottom: 4px;
+            transform: translateX(-50%);
+            background: var(--col-active);
+            transition: all 200ms;
+            box-shadow: 0 0 10px var(--col-active);
+        }
+        .ui-nav-label:has(input:checked) > span.material-symbols-outlined {
+            color: var(--col-active);
+            scale: 1.2;
+            margin-top: -6px;
+            text-shadow: 0 0 15px rgba(255,255,255,0.5);
+        }
+        .ui-nav-label:has(input:checked)::before {
+            width: 40%;
+        }
       `}</style>
 
       <canvas id="noise-canvas" ref={canvasRef}></canvas>
@@ -181,11 +309,11 @@ export default function AapdaAccountProfileFixed({ onHome, onAI, onSignOut, form
         </div>
       </header>
 
-      <main className="pt-28 pb-32 px-4 md:px-6 max-w-3xl mx-auto min-h-screen relative z-20 space-y-8">
+      <main className="pt-28 pb-32 px-4 md:px-6 max-w-3xl mx-auto min-h-screen relative z-20 space-y-8 profile-desktop-layout">
         
         {/* Identity Section */}
-        <section className="animate-fade">
-          <div className="glass-panel p-8 flex flex-col md:flex-row items-center md:items-start gap-8 relative overflow-hidden">
+        <section className="animate-fade profile-identity-section">
+          <div className="glass-panel p-8 flex flex-col md:flex-row items-center md:items-start gap-8 relative overflow-hidden bg-white/5 border border-white/10">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/[0.02] rounded-full -mr-16 -mt-16 blur-3xl"></div>
             
             {/* Big Avatar */}
@@ -212,13 +340,13 @@ export default function AapdaAccountProfileFixed({ onHome, onAI, onSignOut, form
         </section>
 
         {/* Form Sections */}
-        <div className="grid grid-cols-1 gap-12 animate-fade [animation-delay:0.1s]">
+        <div className="grid grid-cols-1 gap-12 animate-fade [animation-delay:0.1s] profile-form-sections">
           
           {/* Group 1: Identity */}
           <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <h2 className="font-mono text-[10px] text-white/40 uppercase tracking-[0.4em] whitespace-nowrap">01 // IDENTITY_MATRICES</h2>
-              <div className="h-px w-full bg-gradient-to-r from-white/10 to-transparent"></div>
+            <div className="flex items-center gap-4 mb-3">
+              <h2 className="font-headline text-sm md:text-base text-white/90 font-bold uppercase tracking-widest whitespace-nowrap glow-text">01 // IDENTITY_MATRICES</h2>
+              <div className="h-[2px] w-full bg-gradient-to-r from-white/20 to-transparent"></div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field
@@ -237,9 +365,9 @@ export default function AapdaAccountProfileFixed({ onHome, onAI, onSignOut, form
 
           {/* Group 2: Comms */}
           <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <h2 className="font-mono text-[10px] text-white/40 uppercase tracking-[0.4em] whitespace-nowrap">02 // COMMUNICATIONS_RELAY</h2>
-              <div className="h-px w-full bg-gradient-to-r from-white/10 to-transparent"></div>
+            <div className="flex items-center gap-4 mb-3">
+              <h2 className="font-headline text-sm md:text-base text-white/90 font-bold uppercase tracking-widest whitespace-nowrap glow-text">02 // COMMUNICATIONS_RELAY</h2>
+              <div className="h-[2px] w-full bg-gradient-to-r from-white/20 to-transparent"></div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field
@@ -259,9 +387,9 @@ export default function AapdaAccountProfileFixed({ onHome, onAI, onSignOut, form
 
           {/* Group 3: Geolocation */}
           <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <h2 className="font-mono text-[10px] text-white/40 uppercase tracking-[0.4em] whitespace-nowrap">03 // GEOSPATIAL_ANCHOR</h2>
-              <div className="h-px w-full bg-gradient-to-r from-white/10 to-transparent"></div>
+            <div className="flex items-center gap-4 mb-3">
+              <h2 className="font-headline text-sm md:text-base text-white/90 font-bold uppercase tracking-widest whitespace-nowrap glow-text">03 // GEOSPATIAL_ANCHOR</h2>
+              <div className="h-[2px] w-full bg-gradient-to-r from-white/20 to-transparent"></div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Field
@@ -293,17 +421,17 @@ export default function AapdaAccountProfileFixed({ onHome, onAI, onSignOut, form
 
           {/* Group 4: Language */}
           <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <h2 className="font-mono text-[10px] text-white/40 uppercase tracking-[0.4em] whitespace-nowrap">04 // LINGUISTIC_PROTOCOLS</h2>
-              <div className="h-px w-full bg-gradient-to-r from-white/10 to-transparent"></div>
+            <div className="flex items-center gap-4 mb-3">
+              <h2 className="font-headline text-sm md:text-base text-white/90 font-bold uppercase tracking-widest whitespace-nowrap glow-text">04 // LINGUISTIC_PROTOCOLS</h2>
+              <div className="h-[2px] w-full bg-gradient-to-r from-white/20 to-transparent"></div>
             </div>
             <div className="space-y-4">
               {/* Preferred Lang */}
               <div className="profile-field group bg-white/[0.02] border border-white/5 p-5">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="material-symbols-outlined text-white/30 text-base">translate</span>
-                  <span className="font-mono text-[9px] text-white/40 uppercase tracking-[0.3em]">Preferred Output Language</span>
-                  <span className="ml-auto font-mono text-[8px] px-2 py-0.5 border border-white/10 text-white/30 uppercase tracking-[0.2em]">USER_DEFINED</span>
+                  <span className="material-symbols-outlined text-white/50 text-base drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">translate</span>
+                  <span className="font-mono text-[10px] text-white/60 uppercase tracking-[0.3em] drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]">Preferred Output Language</span>
+                  <span className="ml-auto font-mono text-[8px] px-2 py-0.5 border border-white/20 text-white/50 uppercase tracking-[0.2em]">USER_DEFINED</span>
                 </div>
                 {isEditing ? (
                   <div className="relative">
@@ -337,10 +465,10 @@ export default function AapdaAccountProfileFixed({ onHome, onAI, onSignOut, form
               {/* Toggle Override */}
               <div className="profile-field bg-white/[0.02] border border-white/5 p-5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-white/20">shield</span>
+                  <span className="material-symbols-outlined text-white/50 drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">shield</span>
                   <div>
-                    <div className="font-mono text-[9px] text-white/40 uppercase tracking-[0.3em]">Global English Override</div>
-                    <div className="font-mono text-[8px] text-white/20 uppercase tracking-widest mt-1">Priority 0 fail-safe status</div>
+                    <div className="font-mono text-[10px] text-white/60 uppercase tracking-[0.3em] drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]">Global English Override</div>
+                    <div className="font-mono text-[8px] text-white/40 uppercase tracking-widest mt-1">Priority 0 fail-safe status</div>
                   </div>
                 </div>
                 {isEditing ? (
@@ -361,37 +489,42 @@ export default function AapdaAccountProfileFixed({ onHome, onAI, onSignOut, form
 
           {/* Sign Out Section */}
           {!isEditing && (
-            <div className="pt-8 pb-12 border-t border-white/5">
+            <div className="pt-8 pb-12 border-t border-white/5 profile-signout-section">
               <button 
                 onClick={onSignOut}
-                className="w-full flex items-center justify-between p-6 border border-red-500/10 bg-red-500/[0.02] hover:bg-red-500/5 hover:border-red-500/30 transition-all group"
+                className="w-full flex items-center justify-between p-6 border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 hover:border-red-500/60 hover:shadow-[0_0_30px_rgba(239,68,68,0.15)] transition-all group"
               >
                 <div className="flex items-center gap-4 text-left">
-                  <span className="material-symbols-outlined text-red-500/50 group-hover:text-red-500 transition-colors">power_settings_new</span>
+                  <span className="material-symbols-outlined text-red-500 group-hover:scale-110 transition-transform">power_settings_new</span>
                   <div>
-                    <div className="font-mono text-[10px] text-red-500/40 uppercase tracking-[0.4em]">SYSTEM_LOGOUT</div>
-                    <div className="font-mono text-[8px] text-red-500/20 uppercase tracking-widest mt-1">Disconnect secure terminal session</div>
+                    <div className="font-mono text-xs text-red-500 uppercase tracking-[0.3em] font-bold">SYSTEM_LOGOUT</div>
+                    <div className="font-mono text-[10px] text-red-400/80 uppercase tracking-widest mt-1">Disconnect secure terminal session</div>
                   </div>
                 </div>
-                <span className="material-symbols-outlined text-red-500/30 group-hover:translate-x-1 transition-transform">chevron_right</span>
+                <span className="material-symbols-outlined text-red-500 group-hover:translate-x-2 transition-transform">chevron_right</span>
               </button>
             </div>
           )}
         </div>
       </main>
 
-      {/* Navigation */}
-      <nav className="fixed bottom-0 left-0 w-full h-20 flex justify-around items-stretch bg-[#050505]/90 backdrop-blur-3xl z-50 border-t border-white/5">
-        <button onClick={onAI} className="flex flex-col items-center justify-center text-white/30 w-full h-full transition-all group nav-item-crazy gap-1 hover:text-white">
-          <span className="material-symbols-outlined text-3xl transition-transform">psychology</span>
-        </button>
-        <button onClick={onHome} className="flex flex-col items-center justify-center text-white/30 w-full h-full transition-all group nav-item-crazy gap-1 border-x border-white/5 hover:text-white">
-          <span className="material-symbols-outlined text-3xl transition-transform">terminal</span>
-        </button>
-        <button className="flex flex-col items-center justify-center text-white w-full h-full transition-all group gap-1 nav-item-active">
-          <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>person_filled</span>
-        </button>
-      </nav>
+      {/* Floating Bottom Nav */}
+      <div className="fixed bottom-8 left-0 w-full flex justify-center z-50 pointer-events-none">
+        <section className="ui-nav-pill pointer-events-auto">
+          <label title="AI Terminal" className="ui-nav-label">
+            <input name="page" type="radio" onClick={onAI} />
+            <span className="material-symbols-outlined text-3xl">smart_toy</span>
+          </label>
+          <label title="Home" className="ui-nav-label">
+            <input name="page" type="radio" onClick={onHome} />
+            <span className="material-symbols-outlined text-3xl">home</span>
+          </label>
+          <label title="Profile" className="ui-nav-label">
+            <input name="page" type="radio" defaultChecked onClick={() => {}} />
+            <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
+          </label>
+        </section>
+      </div>
     </div>
   );
 }
